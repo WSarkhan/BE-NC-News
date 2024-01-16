@@ -10,7 +10,7 @@ exports.fetchArticleById = (article_id) => {
           msg: `No article found for article: ${article_id}`,
         });
       } else {
-        return rows;
+        return rows[0];
       }
     });
 };

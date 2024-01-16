@@ -9,7 +9,6 @@ const { getApi } = require("./app.controllers/api.controllers");
 const { getArticleById } = require("./app.controllers/article.controllers");
 const app = express();
 
-app.use(express.json())
 
 app.get("/api/topics", getTopics);
 

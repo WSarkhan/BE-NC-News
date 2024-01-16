@@ -4,6 +4,7 @@ const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const testData = require("../db/data/test-data/index");
 const data = require("../endpoints.json");
+require("jest-sorted");
 
 beforeEach(() => {
   return seed(testData);
@@ -37,12 +38,29 @@ describe("app", () => {
       });
     });
     describe("/api/articles", () => {
-      describe('GET api/articles', () => {
-          test('status 200: should return a list of all articles', ()=>{
-              
-              expect().toBe();
-              expect().toEqual();
-          });
+      describe("GET api/articles", () => {
+        test("status 200: should return a list of all articles", () => {
+          return request(app)
+            .get("/api/articles")
+            .expect(200)
+            .then(({ body }) => {
+              const { articles } = body;
+              expect(typeof articles).toBe("object");
+              expect(articles).toBeSorted("created_at");
+              articles.forEach((article) => {
+                expect(typeof article.article_id).toBe("number");
+                expect(typeof article.title).toBe("string");
+                expect(typeof article.topic).toBe("string");
+                expect(typeof article.author).toBe("string");
+                expect(typeof article.created_at).toBe("string");
+                expect(typeof article.votes).toBe("number");
+                expect(typeof article.article_img_url).toBe("string");
+                expect(typeof article.body).toBe("undefined");
+                expect(typeof article.comment_count).toBe("number");
+              });
+            });
+        });
+        // Not sure what errors could occur for get /api/articles
       });
       describe("GET /api/articles/:article_id", () => {
         test("Status 200: Should respond with an article object using the id", () => {
@@ -62,15 +80,6 @@ describe("app", () => {
                 article_img_url:
                   "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
               });
-              expect(typeof article).toBe("object");
-              expect(typeof article.article_id).toBe("number");
-              expect(typeof article.title).toBe("string");
-              expect(typeof article.topic).toBe("string");
-              expect(typeof article.author).toBe("string");
-              expect(typeof article.body).toBe("string");
-              expect(typeof article.created_at).toBe("string");
-              expect(typeof article.votes).toBe("number");
-              expect(typeof article.article_img_url).toBe("string");
             });
         });
         test("Status 400: Should respond with a an error message when given invalid id", () => {

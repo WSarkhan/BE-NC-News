@@ -1,4 +1,5 @@
 const db = require("../db/connection");
+const { formatComments } = require("../db/seeds/utils");
 
 exports.fetchArticleById = (article_id) => {
   return db
@@ -10,7 +11,33 @@ exports.fetchArticleById = (article_id) => {
           msg: `No article found for article: ${article_id}`,
         });
       } else {
-        return rows;
+        return rows[0];
       }
+    });
+};
+
+exports.fetchArticles = () => {
+  return db
+    .query(
+      `SELECT article_id, title, topic, author, created_at, votes, article_img_url FROM articles
+    ORDER BY created_at DESC;`
+    )
+    .then(({ rows }) => {
+      const articleComments = rows.map((article) => {
+        return db
+          .query(
+            `
+        SELECT COUNT(*)::INT
+         FROM comments WHERE article_id = ${article.article_id};`
+          )
+          .then(({ rows }) => {
+            article.comment_count = rows[0].count;
+            return article;
+          });
+      });
+
+      return Promise.all(articleComments).then((articlesWithAddedComments) => {
+        return articlesWithAddedComments;
+      });
     });
 };

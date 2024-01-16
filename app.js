@@ -9,11 +9,15 @@ const { getApi } = require("./app.controllers/api.controllers");
 const { getArticleById } = require("./app.controllers/article.controllers");
 const app = express();
 
+app.use(express.json())
+
 app.get("/api/topics", getTopics);
 
 app.get("/api", getApi);
 
 app.get("/api/articles/:article_id", getArticleById);
+
+// app.get("/api/articles", getArticles)
 
 app.use(handleCustomErrors);
 app.use(handlePsqlErrors);

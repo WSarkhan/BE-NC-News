@@ -46,7 +46,9 @@ describe("app", () => {
             .then(({ body }) => {
               const { articles } = body;
               expect(typeof articles).toBe("object");
+              expect(articles.length).toBe(13);
               expect(articles).toBeSorted("created_at");
+              expect(articles).toBeSorted({ descending: true });
               articles.forEach((article) => {
                 expect(typeof article.article_id).toBe("number");
                 expect(typeof article.title).toBe("string");
@@ -100,6 +102,39 @@ describe("app", () => {
                 `No article found for article: ${article_id}`
               );
             });
+        });
+        describe("GET /api/articles/:article_id/comments", () => {
+          test("Status 200: Should respond with all comments for a given article id in an array ", () => {
+            return request(app)
+              .get("/api/articles/1/comments")
+              .expect(200)
+              .then(({ body }) => {
+                const { comments } = body;
+                expect(Array.isArray(comments)).toBe(true);
+                expect(comments).toHaveLength(11);
+                comments.forEach((comment) => {
+                  expect(comment).toHaveProperty("comment_id");
+                  expect(comment).toHaveProperty("votes");
+                  expect(comment).toHaveProperty("created_at");
+                  expect(comment).toHaveProperty("author");
+                  expect(comment).toHaveProperty("body");
+                  expect(comment).toHaveProperty("article_id");
+                });
+                expect(comments).toBeSorted("created_at");
+                expect(comments).toBeSorted({ descending: true });
+              });
+          });
+          test("Status 404: Should respond with an error message when given a valid id but no comments exist", () => {
+            article_id = 2;
+          return request(app)
+            .get(`/api/articles/${article_id}/comments`)
+            .expect(404)
+            .then((res) => {
+              expect(res.body.msg).toBe(
+                `No comments found for article: ${article_id}`
+              );
+            });
+          });
         });
       });
     });

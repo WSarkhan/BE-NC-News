@@ -1,5 +1,4 @@
 const db = require("../db/connection");
-const { formatComments } = require("../db/seeds/utils");
 
 exports.fetchArticleById = (article_id) => {
   return db
@@ -41,3 +40,4 @@ exports.fetchArticles = () => {
       });
     });
 };
+

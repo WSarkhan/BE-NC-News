@@ -41,8 +41,27 @@ describe("app", () => {
         return request(app)
           .get("/api/articles/1")
           .expect(200)
-          .then((res) => {
-            expect(typeof res.body).toBe("object");
+          .then(({ body }) => {
+            expect(body[0]).toEqual({
+              article_id: 1,
+              title: "Living in the shadow of a great man",
+              topic: "mitch",
+              author: "butter_bridge",
+              body: "I find this existence challenging",
+              created_at: "2020-07-09T20:11:00.000Z",
+              votes: 100,
+              article_img_url:
+                "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+            });
+            expect(typeof body).toBe("object");
+            expect(typeof body[0].article_id).toBe("number");
+            expect(typeof body[0].title).toBe("string");
+            expect(typeof body[0].topic).toBe("string");
+            expect(typeof body[0].author).toBe("string");
+            expect(typeof body[0].body).toBe("string");
+            expect(typeof body[0].created_at).toBe("string");
+            expect(typeof body[0].votes).toBe("number");
+            expect(typeof body[0].article_img_url).toBe("string");
           });
       });
       test("Status 400: Should respond with a an error message when given invalid id", () => {

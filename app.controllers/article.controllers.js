@@ -24,4 +24,14 @@ exports.getArticles = (req, res, next) => {
     });
 };
 
+exports.patchArticle = (req,res,next) => {
+  const {inc_votes} = req.body
+  const {article_id} = req.params
+
+  changeArticle(inc_votes, article_id).then((changedArticle) =>{
+    res.status(200).send({changedArticle})
+  })
+
+
+}
 

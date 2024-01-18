@@ -4,7 +4,7 @@ const {
   insertComment,
   removeComment,
 } = require("../app.models/comments.models");
-const { fetchUser } = require("../app.models/user.models");
+const { fetchUser } = require("../app.models/users.models");
 
 exports.getCommentsByArticleId = (req, res, next) => {
   const { article_id } = req.params;

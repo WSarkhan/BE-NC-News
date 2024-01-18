@@ -24,6 +24,22 @@ describe("app", () => {
           expect(res.body).toEqual(data);
         });
     });
+    describe("GET /api/users", () => {
+      test("Status 200: should return all users as an array of objects", () => {
+        return request(app)
+          .get("/api/users")
+          .expect(200)
+          .then(({ body }) => {
+            const { users } = body;
+            expect(users.length).toEqual(4);
+            users.forEach((user) => {
+              expect(user.hasOwnProperty("username")).toBe(true);
+              expect(user.hasOwnProperty("name")).toBe(true);
+              expect(user.hasOwnProperty("avatar_url")).toBe(true);
+            });
+          });
+      });
+    });
     describe("/api/topics", () => {
       test("GET /api/topics status 200: should return a list of all topics", () => {
         return request(app)

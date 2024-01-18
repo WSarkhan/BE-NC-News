@@ -55,7 +55,7 @@ describe("app", () => {
     });
     describe("/api/articles", () => {
       describe("GET api/articles", () => {
-        test("status 200: should return a list of all articles", () => {
+        test("Status 200: should return a list of all articles", () => {
           return request(app)
             .get("/api/articles")
             .expect(200)
@@ -78,7 +78,44 @@ describe("app", () => {
               });
             });
         });
+        describe("GET api/articles?topic=", () => {
+          test("Status 200: Should return a list of all articles with the same topic", () => {
+            return request(app)
+              .get("/api/articles?topic=mitch")
+              .expect(200)
+              .then(({ body }) => {
+                const { articles } = body;
+                expect(typeof articles).toBe("object");
+                expect(articles.length).toBe(12);
+                expect(articles).toBeSorted("created_at");
+                expect(articles).toBeSorted({ descending: true });
+                articles.forEach((article) => {
+                  expect(typeof article.article_id).toBe("number");
+                  expect(typeof article.title).toBe("string");
+                  expect(typeof article.topic).toBe("string");
+                  expect(article.topic).toBe("mitch");
+                  expect(typeof article.author).toBe("string");
+                  expect(typeof article.created_at).toBe("string");
+                  expect(typeof article.votes).toBe("number");
+                  expect(typeof article.article_img_url).toBe("string");
+                  expect(typeof article.body).toBe("undefined");
+                  expect(typeof article.comment_count).toBe("number");
+                });
+              });
+          });
+          test("Status 404: Should return an article not found with this topic", () => {
+            return request(app)
+              .get("/api/articles?topic=science")
+              .expect(404)
+              .then((res) => {
+                expect(res.body.msg).toBe(
+                  `Articles with topic science not found`
+                );
+              });
+          });
+        });
       });
+
       describe("GET /api/articles/:article_id", () => {
         test("Status 200: Should respond with an article object using the id", () => {
           return request(app)

@@ -165,7 +165,7 @@ describe("app", () => {
         test("Status 400: Should return Bad request if body has a string instead of a number", () => {
           return request(app)
             .patch("/api/articles/1")
-            .send({ inc_votes: 'string' })
+            .send({ inc_votes: "string" })
             .expect(400)
             .then((res) => {
               expect(res.body.msg).toBe(`Bad request`);
@@ -242,10 +242,19 @@ describe("app", () => {
               expect(comment.hasOwnProperty("created_at")).toBe(true);
             });
         });
-        test("Status 400: Should respond with Bad request if body or username is not a string", () => {
+        test("Status 400: Should respond with Bad request if username is not a string", () => {
           return request(app)
             .post("/api/articles/1/comments")
             .send({ body: "Hello ", username: 1 })
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).toBe(`Bad request`);
+            });
+        });
+        test("Status 400: Should respond with Bad request if body is not a string", () => {
+          return request(app)
+            .post("/api/articles/1/comments")
+            .send({ body: 1, username: "butter_bridge" })
             .expect(400)
             .then(({ body }) => {
               expect(body.msg).toBe(`Bad request`);
@@ -279,7 +288,29 @@ describe("app", () => {
             });
         });
       });
+      describe("DELETE /api/comments/:comment_id", () => {
+        test("Status 204: Deletes the comment using comment_id", () => {
+          return request(app).delete("/api/comments/1").expect(204);
+        });
+        test("Status 404: When given a valid Id but no comment exists", () => {
+          return request(app)
+            .delete("/api/comments/999")
+            .expect(404)
+            .then(({ body }) => {
+              const { msg } = body;
+              expect(msg).toBe("Not found comment by the id of: 999");
+            });
+        });
+        test("Status 400: When given an invalid Id ", () => {
+          return request(app)
+            .delete("/api/comments/not-an-id")
+            .expect(400)
+            .then(({ body }) => {
+              const { msg } = body;
+              expect(msg).toBe("Bad request");
+            });
+        });
+      });
     });
   });
 });
- 

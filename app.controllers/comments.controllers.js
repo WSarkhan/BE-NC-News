@@ -2,6 +2,7 @@ const { fetchArticleById } = require("../app.models/articles.models");
 const {
   fetchCommentsByArticleId,
   insertComment,
+  removeComment,
 } = require("../app.models/comments.models");
 const { fetchUser } = require("../app.models/user.models");
 
@@ -40,4 +41,15 @@ exports.postComment = (req, res, next) => {
         next(err);
       });
   }
+};
+
+exports.deleteComment = (req, res, next) => {
+  const { comment_id } = req.params;
+  removeComment(comment_id)
+    .then(() => {
+      res.status(204).send();
+    })
+    .catch((err) => {
+      next(err);
+    });
 };

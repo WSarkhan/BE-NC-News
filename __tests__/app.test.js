@@ -102,114 +102,213 @@ describe("app", () => {
               );
             });
         });
-        describe("GET /api/articles/:article_id/comments", () => {
-          test("Status 200: Should respond with all comments for a given article id in an array ", () => {
-            return request(app)
-              .get("/api/articles/1/comments")
-              .expect(200)
-              .then(({ body }) => {
-                const { comments } = body;
-                expect(Array.isArray(comments)).toBe(true);
-                expect(comments).toHaveLength(11);
-                comments.forEach((comment) => {
-                  expect(comment).toHaveProperty("comment_id");
-                  expect(comment).toHaveProperty("votes");
-                  expect(comment).toHaveProperty("created_at");
-                  expect(comment).toHaveProperty("author");
-                  expect(comment).toHaveProperty("body");
-                  expect(comment).toHaveProperty("article_id");
-                });
-                expect(comments).toBeSorted("created_at");
-                expect(comments).toBeSorted({ descending: true });
+      });
+      describe("PATCH /api/articles/:article_id", () => {
+        test("Status 200: Should update article with correct votes", () => {
+          return request(app)
+            .patch("/api/articles/1")
+            .send({ inc_votes: 1 })
+            .expect(200)
+            .then(({ body }) => {
+              const { article } = body;
+              expect(article).toEqual({
+                article_id: 1,
+                title: "Living in the shadow of a great man",
+                topic: "mitch",
+                author: "butter_bridge",
+                body: "I find this existence challenging",
+                created_at: "2020-07-09T20:11:00.000Z",
+                votes: 101,
+                article_img_url:
+                  "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
               });
-          });
-          test("Status 404: Should respond with an error message when given a valid id but no comments exist", () => {
-            article_id = 2;
-            return request(app)
-              .get(`/api/articles/${article_id}/comments`)
-              .expect(404)
-              .then((res) => {
-                expect(res.body.msg).toBe(
-                  `No Comments found for article ${article_id}`
-                );
-              });
-          });
-          test("Status 404: Should respond with an error message when given a valid id but no article exists yet", () => {
-            article_id = 999;
-            return request(app)
-              .get(`/api/articles/${article_id}/comments`)
-              .expect(404)
-              .then((res) => {
-                expect(res.body.msg).toBe(
-                  `No article found for article: ${article_id}`
-                );
-              });
-          });
-          test("Status 400: Should respond with an error message when given an invalid id", () => {
-            article_id = "not-an-id";
-            return request(app)
-              .get(`/api/articles/${article_id}/comments`)
-              .expect(400)
-              .then((res) => {
-                expect(res.body.msg).toBe(`Bad request`);
-              });
-          });
+            });
         });
-        describe("POST /api/articles/:article_id/comments", () => {
-          test("Status 201: Should Create a new comment and respond with the comment created", () => {
-            return request(app)
-              .post("/api/articles/1/comments")
-              .send({ body: "Test", username: "butter_bridge" })
-              .expect(201)
-              .then(({ body }) => {
-                const { comment } = body;
-                expect(typeof comment).toBe("object");
-                expect(comment.hasOwnProperty("comment_id")).toBe(true);
-                expect(comment.body).toBe("Test");
-                expect(comment.votes).toBe(0);
-                expect(comment.author).toBe("butter_bridge");
-                expect(comment.article_id).toBe(1);
-                expect(comment.hasOwnProperty("created_at")).toBe(true);
+        test("Status 200: Should update article with correct vote if inc_votes is negative", () => {
+          return request(app)
+            .patch("/api/articles/1")
+            .send({ inc_votes: -100 })
+            .expect(200)
+            .then(({ body }) => {
+              const { article } = body;
+              expect(article).toEqual({
+                article_id: 1,
+                title: "Living in the shadow of a great man",
+                topic: "mitch",
+                author: "butter_bridge",
+                body: "I find this existence challenging",
+                created_at: "2020-07-09T20:11:00.000Z",
+                votes: 0,
+                article_img_url:
+                  "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
               });
-          });
-          test("Status 400: Should respond with Bad request if body or username is not a string", () => {
-            return request(app)
-              .post("/api/articles/1/comments")
-              .send({ body: "Hello ", username: 1 })
-              .expect(400)
-              .then(({ body }) => {
-                expect(body.msg).toBe(`Bad request`);
+            });
+        });
+        test("Status 404: Should return not found if article id is valid but incorrect", () => {
+          return request(app)
+            .patch("/api/articles/999")
+            .send({ inc_votes: 1 })
+            .expect(404)
+            .then((res) => {
+              expect(res.body.msg).toBe(`No article found for article: 999`);
+            });
+        });
+        test("Status 400: Should return Bad request if article id is not valid", () => {
+          return request(app)
+            .patch("/api/articles/not-an-article")
+            .send({ inc_votes: 1 })
+            .expect(400)
+            .then((res) => {
+              expect(res.body.msg).toBe(`Bad request`);
+            });
+        });
+        test("Status 400: Should return Bad request if body has a string instead of a number", () => {
+          return request(app)
+            .patch("/api/articles/1")
+            .send({ inc_votes: "string" })
+            .expect(400)
+            .then((res) => {
+              expect(res.body.msg).toBe(`Bad request`);
+            });
+        });
+      });
+      describe("GET /api/articles/:article_id/comments", () => {
+        test("Status 200: Should respond with all comments for a given article id in an array ", () => {
+          return request(app)
+            .get("/api/articles/1/comments")
+            .expect(200)
+            .then(({ body }) => {
+              const { comments } = body;
+              expect(Array.isArray(comments)).toBe(true);
+              expect(comments).toHaveLength(11);
+              comments.forEach((comment) => {
+                expect(comment).toHaveProperty("comment_id");
+                expect(comment).toHaveProperty("votes");
+                expect(comment).toHaveProperty("created_at");
+                expect(comment).toHaveProperty("author");
+                expect(comment).toHaveProperty("body");
+                expect(comment).toHaveProperty("article_id");
               });
-          });
-          test("Status 400: Should respond with bad request if article id is not a valid id", () => {
-            return request(app)
-              .post("/api/articles/not-an-article/comments")
-              .send({ body: "Test", username: "butter_bridge" })
-              .expect(400)
-              .then(({ body }) => {
-                expect(body.msg).toBe(`Bad request`);
-              });
-          });
-          test("Status 404: Should respond with not found if article has recieved a valid but incorrect id", () => {
-            return request(app)
-              .post("/api/articles/999/comments")
-              .send({ body: "Test", username: "butter_bridge" })
-              .expect(404)
-              .then(({ body }) => {
-                expect(body.msg).toBe(`No article found for article: 999`);
-              });
-          });
-          test("Status 404: Should respond with user not found if username is not found", () => {
-            return request(app)
-              .post("/api/articles/1/comments")
-              .send({ body: "Test", username: "not_a_user" })
-              .expect(404)
-              .then(({ body }) => {
-                expect(body.msg).toBe(
-                  `No user found by the name of not_a_user`
-                );
-              });
-          });
+              expect(comments).toBeSorted("created_at");
+              expect(comments).toBeSorted({ descending: true });
+            });
+        });
+        test("Status 404: Should respond with an error message when given a valid id but no comments exist", () => {
+          article_id = 2;
+          return request(app)
+            .get(`/api/articles/${article_id}/comments`)
+            .expect(404)
+            .then((res) => {
+              expect(res.body.msg).toBe(
+                `No Comments found for article ${article_id}`
+              );
+            });
+        });
+        test("Status 404: Should respond with an error message when given a valid id but no article exists yet", () => {
+          article_id = 999;
+          return request(app)
+            .get(`/api/articles/${article_id}/comments`)
+            .expect(404)
+            .then((res) => {
+              expect(res.body.msg).toBe(
+                `No article found for article: ${article_id}`
+              );
+            });
+        });
+        test("Status 400: Should respond with an error message when given an invalid id", () => {
+          article_id = "not-an-id";
+          return request(app)
+            .get(`/api/articles/${article_id}/comments`)
+            .expect(400)
+            .then((res) => {
+              expect(res.body.msg).toBe(`Bad request`);
+            });
+        });
+      });
+      describe("POST /api/articles/:article_id/comments", () => {
+        test("Status 201: Should Create a new comment and respond with the comment created", () => {
+          return request(app)
+            .post("/api/articles/1/comments")
+            .send({ body: "Test", username: "butter_bridge" })
+            .expect(201)
+            .then(({ body }) => {
+              const { comment } = body;
+              expect(typeof comment).toBe("object");
+              expect(comment.hasOwnProperty("comment_id")).toBe(true);
+              expect(comment.body).toBe("Test");
+              expect(comment.votes).toBe(0);
+              expect(comment.author).toBe("butter_bridge");
+              expect(comment.article_id).toBe(1);
+              expect(comment.hasOwnProperty("created_at")).toBe(true);
+            });
+        });
+        test("Status 400: Should respond with Bad request if username is not a string", () => {
+          return request(app)
+            .post("/api/articles/1/comments")
+            .send({ body: "Hello ", username: 1 })
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).toBe(`Bad request`);
+            });
+        });
+        test("Status 400: Should respond with Bad request if body is not a string", () => {
+          return request(app)
+            .post("/api/articles/1/comments")
+            .send({ body: 1, username: "butter_bridge" })
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).toBe(`Bad request`);
+            });
+        });
+        test("Status 400: Should respond with bad request if article id is not a valid id", () => {
+          return request(app)
+            .post("/api/articles/not-an-article/comments")
+            .send({ body: "Test", username: "butter_bridge" })
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).toBe(`Bad request`);
+            });
+        });
+        test("Status 404: Should respond with not found if article has recieved a valid but incorrect id", () => {
+          return request(app)
+            .post("/api/articles/999/comments")
+            .send({ body: "Test", username: "butter_bridge" })
+            .expect(404)
+            .then(({ body }) => {
+              expect(body.msg).toBe(`No article found for article: 999`);
+            });
+        });
+        test("Status 404: Should respond with user not found if username is not found", () => {
+          return request(app)
+            .post("/api/articles/1/comments")
+            .send({ body: "Test", username: "not_a_user" })
+            .expect(404)
+            .then(({ body }) => {
+              expect(body.msg).toBe(`No user found by the name of not_a_user`);
+            });
+        });
+      });
+      describe("DELETE /api/comments/:comment_id", () => {
+        test("Status 204: Deletes the comment using comment_id", () => {
+          return request(app).delete("/api/comments/1").expect(204);
+        });
+        test("Status 404: When given a valid Id but no comment exists", () => {
+          return request(app)
+            .delete("/api/comments/999")
+            .expect(404)
+            .then(({ body }) => {
+              const { msg } = body;
+              expect(msg).toBe("Not found comment by the id of: 999");
+            });
+        });
+        test("Status 400: When given an invalid Id ", () => {
+          return request(app)
+            .delete("/api/comments/not-an-id")
+            .expect(400)
+            .then(({ body }) => {
+              const { msg } = body;
+              expect(msg).toBe("Bad request");
+            });
         });
       });
     });

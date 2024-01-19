@@ -35,7 +35,7 @@ If you don't have these installed, you can download node here **[Node.js](https:
 
 ---
 
-### **Setup **
+### **Setup**
 
 #### **1. Clone this repository locally in the terminal**
 
@@ -90,7 +90,7 @@ npm audit fix
 
 ---
 
-#### 3. **Create files for environment varibles**
+#### 3. **Create files for environment variables**
 
 *Create a folder named **.env.development** and insert the following:-*
 ```

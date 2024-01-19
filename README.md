@@ -12,7 +12,7 @@ A list of available endpoints can be found **[here](#api-endpoints-list)**
 
 ## **Instructions**
 
-### **Minimum version **
+### **Minimum version**
 
 - **[Node.js](https://nodejs.org/en)** v21.2.0
 - **[PostgresSQL](https://www.postgresql.org/)** v14.9

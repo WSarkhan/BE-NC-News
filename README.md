@@ -129,6 +129,8 @@ npm test app
 ```
 **If all tests pass, the API is ready to be deployed**
 
+---
+
 ## **API Endpoints list**
 
 ### GET /api

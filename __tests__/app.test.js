@@ -20,8 +20,9 @@ describe("app", () => {
       return request(app)
         .get("/api/")
         .expect(200)
-        .then((res) => {
-          expect(res.body).toEqual(data);
+        .then(({body}) => {
+          const {endpoints} = body
+          expect(endpoints).toEqual(data);
         });
     });
     describe("GET /api/users", () => {

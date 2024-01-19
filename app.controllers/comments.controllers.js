@@ -1,4 +1,4 @@
-const { fetchArticleById } = require("../app.models/articles.models");
+const { findIfArticleExists } = require("../app.models/articles.models");
 const {
   fetchCommentsByArticleId,
   insertComment,
@@ -8,7 +8,7 @@ const { fetchUser } = require("../app.models/users.models");
 
 exports.getCommentsByArticleId = (req, res, next) => {
   const { article_id } = req.params;
-  const articleQuery = fetchArticleById(article_id);
+  const articleQuery = findIfArticleExists(article_id);
   const fetchQuery = fetchCommentsByArticleId(article_id);
 
   Promise.all([fetchQuery, articleQuery])
@@ -27,7 +27,7 @@ exports.postComment = (req, res, next) => {
   if (typeof body !== "string" || typeof username !== "string") {
     next({ status: 400, msg: "Bad request" });
   } else {
-    const articleQuery = fetchArticleById(article_id);
+    const articleQuery = findIfArticleExists(article_id);
     const userQuery = fetchUser(username);
 
     Promise.all([articleQuery, userQuery])

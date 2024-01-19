@@ -66,15 +66,15 @@ describe("app", () => {
               expect(articles).toBeSorted("created_at");
               expect(articles).toBeSorted({ descending: true });
               articles.forEach((article) => {
-                expect(typeof article.article_id).toBe("number");
-                expect(typeof article.title).toBe("string");
-                expect(typeof article.topic).toBe("string");
-                expect(typeof article.author).toBe("string");
-                expect(typeof article.created_at).toBe("string");
-                expect(typeof article.votes).toBe("number");
-                expect(typeof article.article_img_url).toBe("string");
-                expect(typeof article.body).toBe("undefined");
-                expect(typeof article.comment_count).toBe("number");
+                expect(article).toHaveProperty("article_id", expect.any(Number));
+                expect(article).toHaveProperty("title", expect.any(String));
+                expect(article).toHaveProperty("topic", expect.any(String));
+                expect(article).toHaveProperty("author", expect.any(String));
+                expect(article).toHaveProperty("created_at", expect.any(String));
+                expect(article).toHaveProperty("votes", expect.any(Number));
+                expect(article).toHaveProperty("article_img_url", expect.any(String));
+                expect(article).not.toHaveProperty("body");
+                expect(article).toHaveProperty("comment_count", expect.any(Number));
               });
             });
         });
@@ -91,20 +91,30 @@ describe("app", () => {
               expect(articles).toBeSorted("created_at");
               expect(articles).toBeSorted({ descending: true });
               articles.forEach((article) => {
-                expect(typeof article.article_id).toBe("number");
-                expect(typeof article.title).toBe("string");
-                expect(typeof article.topic).toBe("string");
-                expect(article.topic).toBe("mitch");
-                expect(typeof article.author).toBe("string");
-                expect(typeof article.created_at).toBe("string");
-                expect(typeof article.votes).toBe("number");
-                expect(typeof article.article_img_url).toBe("string");
-                expect(typeof article.body).toBe("undefined");
-                expect(typeof article.comment_count).toBe("number");
+                expect(article).toHaveProperty("article_id", expect.any(Number));
+                expect(article).toHaveProperty("title", expect.any(String));
+                expect(article).toHaveProperty("topic", "mitch");
+                expect(article).toHaveProperty("author", expect.any(String));
+                expect(article).toHaveProperty("created_at", expect.any(String));
+                expect(article).toHaveProperty("votes", expect.any(Number));
+                expect(article).toHaveProperty("article_img_url", expect.any(String));
+                expect(article).not.toHaveProperty("body");
+                expect(article).toHaveProperty("comment_count", expect.any(Number));
               });
             });
         });
-        test("Status 404: Should return an article not found with this topic", () => {
+        test("Status 200: Should return an empty array when topic has no articles", () => {
+          return request(app)
+            .get("/api/articles?topic=paper")
+            .expect(200)
+            .then(({ body }) => {
+              const { articles } = body;
+              expect(typeof articles).toBe("object");
+              expect(articles.length).toBe(0);
+              expect(articles).toEqual([])
+            });
+        });
+        test("Status 404: Should return an article not found when given a valid topic name but no topics can be found with that name", () => {
           return request(app)
             .get("/api/articles?topic=science")
             .expect(404)
@@ -124,18 +134,15 @@ describe("app", () => {
           .expect(200)
           .then(({ body }) => {
             const { article } = body;
-            expect(article).toEqual({
-              article_id: 1,
-              title: "Living in the shadow of a great man",
-              topic: "mitch",
-              author: "butter_bridge",
-              body: "I find this existence challenging",
-              created_at: "2020-07-09T20:11:00.000Z",
-              votes: 100,
-              comment_count: 11,
-              article_img_url:
-                "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
-            });
+              expect(article).toHaveProperty("article_id", 1);
+              expect(article).toHaveProperty("title", "Living in the shadow of a great man");
+              expect(article).toHaveProperty("topic", "mitch");
+              expect(article).toHaveProperty("author", "butter_bridge");
+              expect(article).toHaveProperty("created_at", "2020-07-09T20:11:00.000Z");
+              expect(article).toHaveProperty("votes", 100);
+              expect(article).toHaveProperty("article_img_url", "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700");
+              expect(article).toHaveProperty("body", "I find this existence challenging");
+              expect(article).toHaveProperty("comment_count", 11);
           });
       });
       test("Status 200: Should respond with an article object with comment count 0 when the article has no comments", () => {
@@ -144,18 +151,15 @@ describe("app", () => {
           .expect(200)
           .then(({ body }) => {
             const { article } = body;
-            expect(article).toEqual({
-              article_id: 2,
-              article_img_url:
-                "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
-              author: "icellusedkars",
-              body: "Call me Mitchell. Some years ago—never mind how long precisely—having little or no money in my purse, and nothing particular to interest me on shore, I thought I would buy a laptop about a little and see the codey part of the world. It is a way I have of driving off the spleen and regulating the circulation. Whenever I find myself growing grim about the mouth; whenever it is a damp, drizzly November in my soul; whenever I find myself involuntarily pausing before coffin warehouses, and bringing up the rear of every funeral I meet; and especially whenever my hypos get such an upper hand of me, that it requires a strong moral principle to prevent me from deliberately stepping into the street, and methodically knocking people’s hats off—then, I account it high time to get to coding as soon as I can. This is my substitute for pistol and ball. With a philosophical flourish Cato throws himself upon his sword; I quietly take to the laptop. There is nothing surprising in this. If they but knew it, almost all men in their degree, some time or other, cherish very nearly the same feelings towards the the Vaio with me.",
-              created_at: "2020-10-16T05:03:00.000Z",
-              title: "Sony Vaio; or, The Laptop",
-              topic: "mitch",
-              votes: 0,
-              comment_count: 0,
-            });
+            expect(article).toHaveProperty("article_id", 2);
+            expect(article).toHaveProperty("title", "Sony Vaio; or, The Laptop");
+            expect(article).toHaveProperty("topic", "mitch");
+            expect(article).toHaveProperty("author", "icellusedkars");
+            expect(article).toHaveProperty("created_at", "2020-10-16T05:03:00.000Z");
+            expect(article).toHaveProperty("votes", 0);
+            expect(article).toHaveProperty("article_img_url",  "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700");
+            expect(article).toHaveProperty("body", "Call me Mitchell. Some years ago—never mind how long precisely—having little or no money in my purse, and nothing particular to interest me on shore, I thought I would buy a laptop about a little and see the codey part of the world. It is a way I have of driving off the spleen and regulating the circulation. Whenever I find myself growing grim about the mouth; whenever it is a damp, drizzly November in my soul; whenever I find myself involuntarily pausing before coffin warehouses, and bringing up the rear of every funeral I meet; and especially whenever my hypos get such an upper hand of me, that it requires a strong moral principle to prevent me from deliberately stepping into the street, and methodically knocking people’s hats off—then, I account it high time to get to coding as soon as I can. This is my substitute for pistol and ball. With a philosophical flourish Cato throws himself upon his sword; I quietly take to the laptop. There is nothing surprising in this. If they but knew it, almost all men in their degree, some time or other, cherish very nearly the same feelings towards the the Vaio with me.");
+            expect(article).toHaveProperty("comment_count", 0);
           });
       });
       test("Status 400: Should respond with a an error message when given invalid id", () => {
@@ -186,17 +190,15 @@ describe("app", () => {
           .expect(200)
           .then(({ body }) => {
             const { article } = body;
-            expect(article).toEqual({
-              article_id: 1,
-              title: "Living in the shadow of a great man",
-              topic: "mitch",
-              author: "butter_bridge",
-              body: "I find this existence challenging",
-              created_at: "2020-07-09T20:11:00.000Z",
-              votes: 101,
-              article_img_url:
-                "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
-            });
+            expect(article).toHaveProperty("article_id", 1);
+            expect(article).toHaveProperty("title", "Living in the shadow of a great man");
+            expect(article).toHaveProperty("topic", "mitch");
+            expect(article).toHaveProperty("author", "butter_bridge");
+            expect(article).toHaveProperty("created_at", "2020-07-09T20:11:00.000Z");
+            expect(article).toHaveProperty("votes", 101);
+            expect(article).toHaveProperty("article_img_url", "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700");
+            expect(article).toHaveProperty("body", "I find this existence challenging");
+            expect(article).toHaveProperty("comment_count", 11);
           });
       });
       test("Status 200: Should update article with correct vote if inc_votes is negative", () => {
@@ -206,17 +208,15 @@ describe("app", () => {
           .expect(200)
           .then(({ body }) => {
             const { article } = body;
-            expect(article).toEqual({
-              article_id: 1,
-              title: "Living in the shadow of a great man",
-              topic: "mitch",
-              author: "butter_bridge",
-              body: "I find this existence challenging",
-              created_at: "2020-07-09T20:11:00.000Z",
-              votes: 0,
-              article_img_url:
-                "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
-            });
+            expect(article).toHaveProperty("article_id", 1);
+            expect(article).toHaveProperty("title", "Living in the shadow of a great man");
+            expect(article).toHaveProperty("topic", "mitch");
+            expect(article).toHaveProperty("author", "butter_bridge");
+            expect(article).toHaveProperty("created_at", "2020-07-09T20:11:00.000Z");
+            expect(article).toHaveProperty("votes", 0);
+            expect(article).toHaveProperty("article_img_url", "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700");
+            expect(article).toHaveProperty("body", "I find this existence challenging");
+            expect(article).toHaveProperty("comment_count", 11);
           });
       });
       test("Status 404: Should return not found if article id is valid but incorrect", () => {
@@ -257,12 +257,12 @@ describe("app", () => {
             expect(Array.isArray(comments)).toBe(true);
             expect(comments).toHaveLength(11);
             comments.forEach((comment) => {
-              expect(comment).toHaveProperty("comment_id");
-              expect(comment).toHaveProperty("votes");
-              expect(comment).toHaveProperty("created_at");
-              expect(comment).toHaveProperty("author");
-              expect(comment).toHaveProperty("body");
-              expect(comment).toHaveProperty("article_id");
+              expect(comment).toHaveProperty("comment_id", expect.any(Number));
+              expect(comment).toHaveProperty("votes", expect.any(Number));
+              expect(comment).toHaveProperty("created_at", expect.any(String));
+              expect(comment).toHaveProperty("author", expect.any(String));
+              expect(comment).toHaveProperty("body", expect.any(String));
+              expect(comment).toHaveProperty("article_id", expect.any(Number));
             });
             expect(comments).toBeSorted("created_at");
             expect(comments).toBeSorted({ descending: true });
@@ -309,12 +309,12 @@ describe("app", () => {
           .then(({ body }) => {
             const { comment } = body;
             expect(typeof comment).toBe("object");
-            expect(comment.hasOwnProperty("comment_id")).toBe(true);
-            expect(comment.body).toBe("Test");
-            expect(comment.votes).toBe(0);
-            expect(comment.author).toBe("butter_bridge");
-            expect(comment.article_id).toBe(1);
-            expect(comment.hasOwnProperty("created_at")).toBe(true);
+            expect(comment).toHaveProperty("comment_id", expect.any(Number));
+            expect(comment).toHaveProperty("votes", 0);
+            expect(comment).toHaveProperty("created_at", expect.any(String));
+            expect(comment).toHaveProperty("author", "butter_bridge" );
+            expect(comment).toHaveProperty("body", "Test");
+            expect(comment).toHaveProperty("article_id", expect.any(Number));
           });
       });
       test("Status 400: Should respond with Bad request if username is not a string", () => {

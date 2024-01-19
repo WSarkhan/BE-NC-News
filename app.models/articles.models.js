@@ -38,77 +38,78 @@ exports.fetchArticleById = (article_id) => {
 };
 
 exports.fetchArticles = (topic, articleTopics) => {
-  return db.query("SELECT * FROM topics").then(({rows})=>{
-    let whitelistedTopic = []
-    rows.map((row)=>{
-      whitelistedTopic.push(row.slug)
+  return db
+    .query("SELECT * FROM topics")
+    .then(({ rows }) => {
+      let whitelistedTopic = [];
+      rows.map((row) => {
+        whitelistedTopic.push(row.slug);
+      });
+      return whitelistedTopic;
     })
-    return whitelistedTopic
-  }).then((whitelistedTopic)=>{
-
-    if (topic && whitelistedTopic.includes(topic) === true) {
-      return db
-        .query(
-          `SELECT article_id, title, topic, author, created_at, votes, article_img_url FROM articles
+    .then((whitelistedTopic) => {
+      if (topic && whitelistedTopic.includes(topic) === true) {
+        return db
+          .query(
+            `SELECT article_id, title, topic, author, created_at, votes, article_img_url FROM articles
           WHERE topic = $1
           ORDER BY created_at DESC;`,
-          [topic]
-        )
-        .then(({ rows }) => {
-          const articleComments = rows.map((article) => {
-            return db
-              .query(
-                `
+            [topic]
+          )
+          .then(({ rows }) => {
+            const articleComments = rows.map((article) => {
+              return db
+                .query(
+                  `
             SELECT COUNT(*)::INT
              FROM comments WHERE article_id = ${article.article_id};`
-              )
-              .then(({ rows }) => {
-                article.comment_count = rows[0].count;
-                return article;
-              });
+                )
+                .then(({ rows }) => {
+                  article.comment_count = rows[0].count;
+                  return article;
+                });
+            });
+
+            return Promise.all(articleComments).then(
+              (articlesWithAddedComments) => {
+                return articlesWithAddedComments;
+              }
+            );
           });
-  
-          return Promise.all(articleComments).then(
-            (articlesWithAddedComments) => {
-              return articlesWithAddedComments;
-            }
-          );
-        });
-    } else if (!topic) {
-      return db
-        .query(
-          `SELECT article_id, title, topic, author, created_at, votes, article_img_url FROM articles
+      } else if (!topic) {
+        return db
+          .query(
+            `SELECT article_id, title, topic, author, created_at, votes, article_img_url FROM articles
       ORDER BY created_at DESC;`
-        )
-        .then(({ rows }) => {
-          const articleComments = rows.map((article) => {
-            return db
-              .query(
-                `
+          )
+          .then(({ rows }) => {
+            const articleComments = rows.map((article) => {
+              return db
+                .query(
+                  `
         SELECT COUNT(*)::INT
          FROM comments WHERE article_id = ${article.article_id};`
-              )
-              .then(({ rows }) => {
-                article.comment_count = rows[0].count;
-                return article;
-              });
-          });
-  
-          return Promise.all(articleComments).then(
-            (articlesWithAddedComments) => {
-              return articlesWithAddedComments;
-            }
-          );
-        });
-    } else if (!whitelistedTopic.includes(topic)) {
-      return Promise.reject({
-        status: 404,
-        msg: `Articles with topic ${topic} not found`,
-      });
-    }
-  });
-}
+                )
+                .then(({ rows }) => {
+                  article.comment_count = rows[0].count;
+                  return article;
+                });
+            });
 
+            return Promise.all(articleComments).then(
+              (articlesWithAddedComments) => {
+                return articlesWithAddedComments;
+              }
+            );
+          });
+      } else if (!whitelistedTopic.includes(topic)) {
+        return Promise.reject({
+          status: 404,
+          msg: `Articles with topic ${topic} not found`,
+        });
+      }
+    });
+};
 
 exports.changeArticle = (inc_votes, article_id) => {
   return this.fetchArticleById(article_id).then((result) => {
@@ -116,7 +117,18 @@ exports.changeArticle = (inc_votes, article_id) => {
       .query(
         `UPDATE articles SET votes = votes+$1 WHERE article_id = $2 RETURNING *`,
         [inc_votes, article_id]
-      )
+      ).then(()=>{
+        return db
+        .query(
+          `SELECT articles.*, CAST(COUNT(comments.article_id) AS INT) AS comment_count 
+          FROM articles 
+          LEFT JOIN comments 
+          ON articles.article_id=comments.article_id 
+          WHERE articles.article_id = $1 
+          GROUP BY articles.article_id;`,
+          [article_id]
+        )
+      })
       .then(({ rows }) => {
         return rows[0];
       });

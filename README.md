@@ -6,7 +6,7 @@
 
 This is a RESTful API built using **Test Driven Development (TDD)** . the API was built as the foundational backend structure for a News web application similiar to [Reddit](https://www.reddit.com/). The project was built using **[Node.js](https://nodejs.org/en)** and **[Express.js](https://expressjs.com/)**, and uses **[PostgresSQL](https://www.postgresql.org/)** as its database. The database is hosted on **[ElephantSQL](https://www.elephantsql.com/)** and deployed on **[Render](https://render.com/)**.
 
-The link to the live version of this API can be accessed <a href="https://nc-news-6jgg.onrender.com/api" target="_blank">here</a>
+The link to the live version of this API can be accessed <a href="https://nc-news-6jgg.onrender.com/api" target="_blank"><b>here</b></a>
 
 A list of available endpoints can be found **[here](#api-endpoints-list)**
 

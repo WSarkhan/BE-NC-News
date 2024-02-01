@@ -4,7 +4,7 @@
 
 ### **TECH Stack** Javascript, Expres.js, Node.js, PostgreSQL
 
-This RESTful API was built using **Test Driven Development (TDD)**. The API was built as the foundational backend structure for a News web application similar to [Reddit](https://www.reddit.com/). The project was built using **[Node.js](https://nodejs.org/en)** and **[Express.js](https://expressjs.com/)**, and uses **[PostgresSQL](https://www.postgresql.org/)** as its database. The database is hosted on **[ElephantSQL](https://www.elephantsql.com/)** and deployed on **[Render](https://render.com/)**.
+This RESTful API was built using **Test Driven Development (TDD)**. The API was built as the foundational backend structure for a News web application similar to [Reddit](https://www.reddit.com/). The project was built using **[Node.js](https://nodejs.org/en)** and **[Express.js](https://expressjs.com/)**, and uses **[PostgreSQL](https://www.postgresql.org/)** as its database. The database is hosted on **[ElephantSQL](https://www.elephantsql.com/)** and deployed on **[Render](https://render.com/)**.
 
 The link to the live version of this API can be accessed [here](https://nc-news-6jgg.onrender.com/api)
 

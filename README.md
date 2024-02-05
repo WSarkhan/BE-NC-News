@@ -4,15 +4,15 @@
 
 ### **TECH Stack** Javascript, Expres.js, Node.js, PostgreSQL
 
-This is a RESTful API built using **Test Driven Development (TDD)** . the API was built as the foundational backend structure for a News web application similiar to [Reddit](https://www.reddit.com/). The project was built using **[Node.js](https://nodejs.org/en)** and **[Express.js](https://expressjs.com/)**, and uses **[PostgresSQL](https://www.postgresql.org/)** as its database. The database is hosted on **[ElephantSQL](https://www.elephantsql.com/)** and deployed on **[Render](https://render.com/)**.
+This RESTful API was built using **Test Driven Development (TDD)**. The API was built as the foundational backend structure for a News web application similar to [Reddit](https://www.reddit.com/). The project was built using **[Node.js](https://nodejs.org/en)** and **[Express.js](https://expressjs.com/)**, and uses **[PostgreSQL](https://www.postgresql.org/)** as its database. The database is hosted on **[ElephantSQL](https://www.elephantsql.com/)** and deployed on **[Render](https://render.com/)**.
 
-The link to the live version of this API can be accessed **[here](https://nc-news-6jgg.onrender.com/api)**
+The link to the live version of this API can be accessed [here](https://nc-news-6jgg.onrender.com/api)
 
 A list of available endpoints can be found **[here](#api-endpoints-list)**
 
 ## **Instructions**
 
-### **Minimum version **
+### **Minimum version**
 
 - **[Node.js](https://nodejs.org/en)** v21.2.0
 - **[PostgresSQL](https://www.postgresql.org/)** v14.9
@@ -35,7 +35,7 @@ If you don't have these installed, you can download node here **[Node.js](https:
 
 ---
 
-### **Setup **
+### **Setup**
 
 #### **1. Clone this repository locally in the terminal**
 
@@ -90,7 +90,7 @@ npm audit fix
 
 ---
 
-#### 3. **Create files for environment varibles**
+#### 3. **Create files for environment variables**
 
 *Create a folder named **.env.development** and insert the following:-*
 ```
@@ -128,6 +128,8 @@ npm run seed
 npm test app
 ```
 **If all tests pass, the API is ready to be deployed**
+
+---
 
 ## **API Endpoints list**
 

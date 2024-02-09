@@ -104,6 +104,28 @@ describe("app", () => {
               });
             });
         });
+        test("Status 200: should return a list of articles sorted by created_at in ascending order", () => {
+          return request(app)
+            .get("/api/articles?order=asc")
+            .expect(200)
+            .then(({ body }) => {
+              const { articles } = body;
+              expect(Array.isArray(articles)).toBe(true);
+              expect(articles.length).toBe(13);
+              expect(articles).toBeSorted("created_at", { descending: false });
+            });
+        });
+        test("Status 200: should return a list of articles sorted by comment count in descending order", () => {
+          return request(app)
+            .get("/api/articles?sort_by=comment_count&order=desc")
+            .expect(200)
+            .then(({ body }) => {
+              const { articles } = body;
+              expect(Array.isArray(articles)).toBe(true);
+              expect(articles.length).toBe(13);
+              expect(articles).toBeSorted("comment_count", { descending: true });
+            });
+        });
         test("Status 200: Should return an empty array when topic has no articles", () => {
           return request(app)
             .get("/api/articles?topic=paper")

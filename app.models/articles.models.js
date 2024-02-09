@@ -37,7 +37,7 @@ exports.fetchArticleById = (article_id) => {
     });
 };
 
-exports.fetchArticles = (topic, articleTopics) => {
+exports.fetchArticles = (topic, sort_by = "created_at", order = "DESC", articleTopics) => {
   return db
     .query("SELECT * FROM topics")
     .then(({ rows }) => {
@@ -53,7 +53,7 @@ exports.fetchArticles = (topic, articleTopics) => {
           .query(
             `SELECT article_id, title, topic, author, created_at, votes, article_img_url FROM articles
           WHERE topic = $1
-          ORDER BY created_at DESC;`,
+          ORDER BY ${sort_by} ${order};`,
             [topic]
           )
           .then(({ rows }) => {

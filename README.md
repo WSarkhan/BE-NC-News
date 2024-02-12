@@ -1,4 +1,4 @@
-# **Northcoders News API**
+# **Northcoders Backend News API**
 
 ## **Project Summary**
 

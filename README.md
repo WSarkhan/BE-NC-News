@@ -8,7 +8,21 @@ This RESTful API was built using **Test Driven Development (TDD)**. The API was 
 
 The link to the live version of this API can be accessed [here](https://nc-news-6jgg.onrender.com/api)
 
-A list of available endpoints can be found **[here](#api-endpoints-list)**
+## **API Endpoints list**
+
+| Endpoints                                   | Description                                                                           |
+| :------------------------------------------ | :------------------------------------------------------------------------------------ |
+| **GET** /api                                | Serves up a json representation of all the available endpoints of the api             |
+| **GET** /api/topics                         | Serves an array of all topics                                                         |
+| **GET** /api/users                          | Serves an array of objects containing username, name and avatar_url                   |
+| **GET** /api/articles                       | Serves an array of all articles                                                       |
+| **GET** /api/articles/:article_id           | Serves an article object by article id                                                |
+| **GET** /api/articles/:article_id/comments  | Serves an array of comments for given article_id requested with the most recent first |
+| **POST** /api/articles/:article_id/comments | Adds comment to comment database and serves the added comment                         |
+| **PATCH** /api/articles/:article_id         | Updates article with new vote by article ID                                           |
+| **DELETE** /api/comments/:comment_id        | Deletes the comment by comment_id                                                     |
+
+---
 
 ## **Instructions**
 
@@ -34,6 +48,7 @@ postgres -v
 If you don't have these installed, you can download node here **[Node.js](https://nodejs.org/en)** installing node will install **[NPM](https://www.npmjs.com/)** automatically for you. Postgresql can be installed here **[PostgreSQL](https://www.postgresql.org/download/)**
 
 ---
+
 
 ### **Setup**
 
@@ -128,105 +143,6 @@ npm run seed
 npm test app
 ```
 **If all tests pass, the API is ready to be deployed**
-
----
-
-## **API Endpoints list**
-
-### GET /api
-
-- **Description:** Serves up a JSON representation of all the available endpoints of the API
-
----
-
-### GET /api/topics
-
-- **Description:** Serves an array of all topics
-
----
-
-### GET /api/articles:
-
-- **Description**: Serves an array of all articles
-
----
-
-### GET /api/articles/:article_id:
-
-- **Description**: Responds with a single article object by article Id
-
----
-
-### GET /api/articles/:arcicle_id/comments:
-
-- **Description**: Responds with an array of all comments associated with the given article_id
-
----
-
-### POST /api/articles/:arcicle_id/comments:
-
-- **Description**: Responds with the updated comment
-
-- **Example Request Body**:
-
-```{ 
-    "username": "butter_bridge",
-    "body": "Test"
-    }
-```
-
-- **Example Response**:
-
-  ```
-  [
-    {
-      "comment_id": 19,
-      "body": "Test",
-      "article_id": 1,
-      "author": "butter_bridge",
-      "votes": 14,
-      "created_at": "2020-10-31T03:03:00.000Z"
-    }
-  ]
-  ```
-
----
-
-### PATCH /api/articles/:article_id:
-
-- **Description**: Responds with an array that has been changed to add votes
-
-- **Example Request Body**:
-
- ```
- { "inc_votes": 1}
- ```
-
-- **Example Response**:
-  ```
-  [
-    {
-      "comment_id": 2,
-      "body": "The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.",
-      "article_id": 1,
-      "author": "butter_bridge",
-      "votes": 15,
-      "created_at": "2020-10-31T03:03:00.000Z"
-    }
-  ]
-  ```
-
----
-
-### DELETE /api/comments/:comment_id:
-
-- **Description**: Responds with a 204 with no content
-
----
-
-### GET /api/users:
-
-- **Description**: Responds with an array of objects users
 
 ---
 
